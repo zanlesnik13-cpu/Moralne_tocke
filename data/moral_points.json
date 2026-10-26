@@ -1,0 +1,155 @@
+{
+  "users": {
+    "Žan": {
+      "pin": "1234",
+      "createdAt": "2026-10-26T10:00:00.000Z",
+      "avatarColor": "emerald"
+    },
+    "Luka": {
+      "pin": "2222",
+      "createdAt": "2026-10-26T10:05:00.000Z",
+      "avatarColor": "amber"
+    },
+    "Matic": {
+      "pin": "3333",
+      "createdAt": "2026-10-26T10:10:00.000Z",
+      "avatarColor": "rose"
+    },
+    "Jan": {
+      "pin": "4444",
+      "createdAt": "2026-10-26T10:15:00.000Z",
+      "avatarColor": "indigo"
+    },
+    "Matej": {
+      "pin": "5555",
+      "createdAt": "2026-10-26T11:43:03.267Z",
+      "avatarColor": "indigo"
+    }
+  },
+  "rules": [
+    {
+      "id": "rule-1",
+      "label": "predavanja",
+      "points": -5,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-2",
+      "label": "vaje",
+      "points": -10,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-3",
+      "label": "žreb",
+      "points": -20,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-4",
+      "label": "častiš 20eur",
+      "points": 5,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-5",
+      "label": "teden vse",
+      "points": 10,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-6",
+      "label": "zamutiš",
+      "points": 10,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-7",
+      "label": "seks",
+      "points": 50,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-8",
+      "label": "ne gre kdo vn",
+      "points": -10,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-9",
+      "label": "podpišeš",
+      "points": 5,
+      "isDirectChallenge": false
+    },
+    {
+      "id": "rule-10",
+      "label": "tožarjenje direkt challenge",
+      "points": 0,
+      "isDirectChallenge": true
+    },
+    {
+      "id": "rule-11",
+      "label": "ne igraš ludo kinga",
+      "points": -5,
+      "isDirectChallenge": false
+    }
+  ],
+  "history": [
+    {
+      "id": "tx-1",
+      "timestamp": "2026-10-25T09:15:00.000Z",
+      "recordedBy": "Žan",
+      "targetUser": "Luka",
+      "points": -10,
+      "reason": "Vaje - ni prišel na laboratorijske vaje"
+    },
+    {
+      "id": "tx-2",
+      "timestamp": "2026-10-25T14:30:00.000Z",
+      "recordedBy": "Luka",
+      "targetUser": "Žan",
+      "points": 5,
+      "reason": "Podpišeš - podpisal kolega na predavanjih"
+    },
+    {
+      "id": "tx-3",
+      "timestamp": "2026-10-25T18:00:00.000Z",
+      "recordedBy": "Žan",
+      "targetUser": "Matic",
+      "points": -20,
+      "reason": "Žreb - padel pri žrebu za pijačo"
+    },
+    {
+      "id": "tx-4",
+      "timestamp": "2026-10-25T20:10:00.000Z",
+      "recordedBy": "Jan",
+      "targetUser": "Matic",
+      "points": -10,
+      "reason": "Ne gre kdo vn - zavrnil petkov izhod"
+    },
+    {
+      "id": "tx-5",
+      "timestamp": "2026-10-25T21:40:00.000Z",
+      "recordedBy": "Luka",
+      "targetUser": "Matic",
+      "points": -5,
+      "reason": "Ne igraš ludo kinga - ignoriral vabilo"
+    },
+    {
+      "id": "tx-6",
+      "timestamp": "2026-10-26T01:20:00.000Z",
+      "recordedBy": "Jan",
+      "targetUser": "Matic",
+      "points": -70,
+      "reason": "Zamudil 3 predavanja zapored & pozabil prinesti prigrizke"
+    },
+    {
+      "id": "tx-7",
+      "timestamp": "2026-10-26T02:00:00.000Z",
+      "recordedBy": "Matic",
+      "targetUser": "Jan",
+      "points": 10,
+      "reason": "Teden vse - oddelal vse obveznosti brez zamud"
+    }
+  ]
+}

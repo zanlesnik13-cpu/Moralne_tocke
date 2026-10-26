@@ -1,0 +1,6 @@
+{
+  "name": "Moralne Točke",
+  "description": "Sistem za beleženje moralnih točk z lestvico, revizijsko sledjo, urejanjem pravil in opozorilom za izziv pri -100 točkah.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
