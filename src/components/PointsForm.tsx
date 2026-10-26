@@ -39,7 +39,9 @@ export const PointsForm: React.FC<PointsFormProps> = ({
 
   // Set default target user if none selected
   useEffect(() => {
-    if (!targetUser && users.length > 0) {
+    if (users.length === 0) {
+      setIsNewUser(true);
+    } else if (!targetUser) {
       // Pick first user who isn't current user, or just first user
       const other = users.find((u) => u.name !== currentUser);
       setTargetUser(other ? other.name : users[0].name);

@@ -68,20 +68,39 @@ data = load_data()
 scores = compute_scores(data)
 
 if not st.session_state.authenticated_user:
-    st.title("⚖️ Prijava v Moralne Točke")
-    with st.form("login_form"):
-        name_input = st.text_input("Tvoje ime")
-        pin_input = st.text_input("4-mestni PIN", type="password", max_chars=4)
-        if st.form_submit_button("Vstopi"):
-            if name_input and len(pin_input) == 4 and pin_input.isdigit():
+    st.title("⚖️ Moralne Točke - Dostop")
+    tab_login, tab_register = st.tabs(["🔑 Prijava", "✨ Ustvari nov profil"])
+    with tab_login:
+        with st.form("login_form"):
+            name_input = st.text_input("Tvoje ime")
+            pin_input = st.text_input("4-mestni PIN", type="password", max_chars=4)
+            if st.form_submit_button("Prijavi se"):
                 users = data.get("users", {})
-                if name_input in users and users[name_input].get("pin") != pin_input:
+                if name_input not in users:
+                    st.error("Uporabnik ne obstaja. Kliknite 'Ustvari nov profil'.")
+                elif users[name_input].get("pin") != pin_input:
                     st.error("Napačen PIN!")
                 else:
-                    if name_input not in users:
-                        users[name_input] = {"pin": pin_input, "createdAt": datetime.now().isoformat()}
-                        save_data(data)
                     st.session_state.authenticated_user = name_input
+                    st.session_state.user_pin = pin_input
+                    st.rerun()
+    with tab_register:
+        with st.form("register_form"):
+            reg_name = st.text_input("Novo ime")
+            reg_pin = st.text_input("Izberi 4-mestni PIN", type="password", max_chars=4)
+            reg_pin2 = st.text_input("Ponovi PIN", type="password", max_chars=4)
+            if st.form_submit_button("Ustvari profil in vstopi"):
+                if not reg_name or len(reg_pin) != 4 or not reg_pin.isdigit():
+                    st.error("Vnesite veljavno ime in 4-mestni PIN.")
+                elif reg_pin != reg_pin2:
+                    st.error("PIN kodi se ne ujemata.")
+                elif reg_name in data.get("users", {}):
+                    st.error("Ime je že zasedeno.")
+                else:
+                    data.setdefault("users", {})[reg_name] = {"pin": reg_pin, "createdAt": datetime.now().isoformat()}
+                    save_data(data)
+                    st.session_state.authenticated_user = reg_name
+                    st.session_state.user_pin = reg_pin
                     st.rerun()
     st.stop()
 

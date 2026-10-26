@@ -84,47 +84,78 @@ penalty_users = [u for u, pt in scores.items() if pt <= -100]
 
 # --- PRIJAVA IN VARNOST ---
 if not st.session_state.authenticated_user:
-    st.title("⚖️ Moralne Točke - Prijava")
-    st.markdown("Dobrodošli! Za beleženje moralnih točk in ogled sistema se prosimo prijavite s svojim imenom in 4-mestno kodo (PIN).")
+    st.title("⚖️ Moralne Točke - Dostop")
+    st.markdown("Dobrodošli! Za beleženje moralnih točk in ogled sistema se prosimo prijavite ali ustvarite nov profil.")
     
-    with st.form("login_form"):
-        col1, col2 = st.columns(2)
-        with col1:
-            name_input = st.text_input("Tvoje ime", placeholder="npr. Luka, Žan, Jan...")
-        with col2:
-            pin_input = st.text_input("4-mestni PIN", type="password", max_chars=4, placeholder="4 številke (npr. 1234)")
-        
-        submit_btn = st.form_submit_button("Vstopi v aplikacijo", use_container_width=True)
-        
-        if submit_btn:
-            clean_name = name_input.strip()
-            clean_pin = pin_input.strip()
+    tab_login, tab_register = st.tabs(["🔑 Prijava v obstoječi profil", "✨ Ustvari nov profil"])
+    
+    with tab_login:
+        with st.form("login_form"):
+            col1, col2 = st.columns(2)
+            with col1:
+                name_input = st.text_input("Tvoje ime / vzdevek", placeholder="npr. Luka, Žan, Jan...")
+            with col2:
+                pin_input = st.text_input("4-mestni PIN", type="password", max_chars=4, placeholder="4 številke")
             
-            if not clean_name:
-                st.error("Prosimo, vnesite svoje ime.")
-            elif len(clean_pin) != 4 or not clean_pin.isdigit():
-                st.error("PIN mora biti sestavljen iz točno 4 številk.")
-            else:
-                users = data.get("users", {})
-                if clean_name in users:
-                    if users[clean_name].get("pin") == clean_pin:
+            submit_login = st.form_submit_button("Prijavi se", use_container_width=True)
+            if submit_login:
+                clean_name = name_input.strip()
+                clean_pin = pin_input.strip()
+                
+                if not clean_name:
+                    st.error("Vnesite svoje ime.")
+                elif len(clean_pin) != 4 or not clean_pin.isdigit():
+                    st.error("PIN mora vsebovati točno 4 številke.")
+                else:
+                    users = data.get("users", {})
+                    if clean_name not in users:
+                        st.error(f"Uporabnik '{clean_name}' še ne obstaja. Kliknite na zavihek 'Ustvari nov profil' zgoraj.")
+                    elif users[clean_name].get("pin") != clean_pin:
+                        st.error("Napačen PIN za tega uporabnika!")
+                    else:
                         st.session_state.authenticated_user = clean_name
                         st.session_state.user_pin = clean_pin
                         st.success(f"Pozdravljen nazaj, {clean_name}!")
                         st.rerun()
-                    else:
-                        st.error("Napačen PIN za tega uporabnika!")
+
+    with tab_register:
+        with st.form("register_form"):
+            col1, col2 = st.columns(2)
+            with col1:
+                reg_name = st.text_input("Novo ime ali vzdevek", placeholder="npr. Tvoje Ime...")
+            with col2:
+                reg_pin = st.text_input("Izberi 4-mestni PIN", type="password", max_chars=4, placeholder="4 številke")
+            
+            reg_pin_confirm = st.text_input("Ponovi 4-mestni PIN za potrditev", type="password", max_chars=4, placeholder="ponovi PIN")
+            
+            submit_register = st.form_submit_button("✨ Ustvari nov profil in vstopi", use_container_width=True)
+            if submit_register:
+                clean_name = reg_name.strip()
+                clean_pin = reg_pin.strip()
+                clean_confirm = reg_pin_confirm.strip()
+                
+                if not clean_name:
+                    st.error("Vnesite želeno ime.")
+                elif len(clean_pin) != 4 or not clean_pin.isdigit():
+                    st.error("PIN mora imeti točno 4 številke.")
+                elif clean_pin != clean_confirm:
+                    st.error("PIN kodi se ne ujemata.")
                 else:
-                    users[clean_name] = {
-                        "pin": clean_pin,
-                        "createdAt": datetime.now().isoformat()
-                    }
-                    data["users"] = users
-                    save_data(data)
-                    st.session_state.authenticated_user = clean_name
-                    st.session_state.user_pin = clean_pin
-                    st.success(f"Ustvarjen nov profil za: {clean_name}!")
-                    st.rerun()
+                    users = data.get("users", {})
+                    if clean_name in users:
+                        st.error(f"Ime '{clean_name}' je že zasedeno. Izberite zavihek 'Prijava' ali drugo ime.")
+                    else:
+                        users[clean_name] = {
+                            "pin": clean_pin,
+                            "createdAt": datetime.now().isoformat()
+                        }
+                        data["users"] = users
+                        save_data(data)
+                        st.session_state.authenticated_user = clean_name
+                        st.session_state.user_pin = clean_pin
+                        st.success(f"Profil za {clean_name} uspešno ustvarjen!")
+                        st.rerun()
+
     st.stop()
 
 # --- GLAVNI VMESNIK PO PRIJAVI ---

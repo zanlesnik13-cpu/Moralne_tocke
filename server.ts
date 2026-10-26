@@ -111,14 +111,45 @@ app.get('/api/state', (req, res) => {
   });
 });
 
-// Authentication: Login or register with 4-digit PIN
+// Authentication: Login with existing profile
 app.post('/api/auth/login', (req, res) => {
   const { name, pin } = req.body;
   const cleanName = (name || '').trim();
   const cleanPin = (pin || '').trim();
 
   if (!cleanName) {
-    return res.status(400).json({ error: 'Prosimo, vnesite svoje ime.' });
+    return res.status(400).json({ error: 'Prosimo, vnesite svoje ime ali vzdevek.' });
+  }
+
+  if (!/^\d{4}$/.test(cleanPin)) {
+    return res.status(400).json({ error: 'PIN mora vsebovati natanko 4 številke.' });
+  }
+
+  const db = getDb();
+  if (!db.users) db.users = {};
+
+  if (!db.users[cleanName]) {
+    return res.status(404).json({
+      error: `Uporabnik "${cleanName}" še ne obstaja v bazi. Prosimo, kliknite na zavihek "Ustvari profil" zgoraj.`
+    });
+  }
+
+  // Check PIN
+  if (db.users[cleanName].pin !== cleanPin) {
+    return res.status(401).json({ error: `Napačna 4-mestna koda (PIN) za uporabnika "${cleanName}".` });
+  }
+
+  return res.json({ success: true, user: cleanName, isNew: false });
+});
+
+// Authentication: Register new profile
+app.post('/api/auth/register', (req, res) => {
+  const { name, pin, avatarColor } = req.body;
+  const cleanName = (name || '').trim();
+  const cleanPin = (pin || '').trim();
+
+  if (!cleanName) {
+    return res.status(400).json({ error: 'Prosimo, vnesite ime novega profila.' });
   }
 
   if (!/^\d{4}$/.test(cleanPin)) {
@@ -129,23 +160,22 @@ app.post('/api/auth/login', (req, res) => {
   if (!db.users) db.users = {};
 
   if (db.users[cleanName]) {
-    // Check PIN
-    if (db.users[cleanName].pin !== cleanPin) {
-      return res.status(401).json({ error: 'Napačna 4-mestna koda (PIN) za to ime.' });
-    }
-    return res.json({ success: true, user: cleanName, isNew: false });
-  } else {
-    // Create new profile
-    const colors = ['emerald', 'blue', 'amber', 'rose', 'indigo', 'purple', 'teal', 'cyan'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    db.users[cleanName] = {
-      pin: cleanPin,
-      createdAt: new Date().toISOString(),
-      avatarColor: randomColor
-    };
-    saveDb(db);
-    return res.json({ success: true, user: cleanName, isNew: true });
+    return res.status(409).json({
+      error: `Profil z imenom "${cleanName}" že obstaja. Če je to vaš račun, izberite zavihek "Prijava", sicer pa izberite drugo ime.`
+    });
   }
+
+  const colors = ['emerald', 'blue', 'amber', 'rose', 'indigo', 'purple', 'teal', 'cyan'];
+  const selectedColor = avatarColor || colors[Math.floor(Math.random() * colors.length)];
+
+  db.users[cleanName] = {
+    pin: cleanPin,
+    createdAt: new Date().toISOString(),
+    avatarColor: selectedColor
+  };
+  saveDb(db);
+
+  return res.json({ success: true, user: cleanName, isNew: true });
 });
 
 // Add points entry (Audit log)
